@@ -488,6 +488,8 @@ export interface ChannelPlanQuotaWindow {
 export interface ChannelPlanQuotaResult {
   /** 当前渠道是否支持订阅额度查询 */
   supported: boolean
+  /** 是否展示额度区域；不支持查询的渠道为 false，查询失败仍展示原因。默认展示。 */
+  shouldDisplay?: boolean
   /** 渠道供应商类型 */
   provider: ProviderType
   /** Plan 展示名称 */

@@ -13,6 +13,10 @@ export function currentPlanQuota(loaded: LoadedPlanQuota | null, channelKey: str
   return channelKey !== null && loaded?.channelKey === channelKey ? loaded.result : null
 }
 
+export function shouldDisplayPlanQuota(quota: ChannelPlanQuotaResult | null): boolean {
+  return quota !== null && quota.shouldDisplay !== false
+}
+
 interface PlanQuotaDisplay {
   summary: string
   title: string

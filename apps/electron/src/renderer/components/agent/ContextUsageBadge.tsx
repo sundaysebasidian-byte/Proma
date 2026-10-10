@@ -24,7 +24,7 @@ import {
   type ProviderType,
 } from '@proma/shared'
 import { fetchChannelPlanQuota } from '@/lib/channel-plan-quota'
-import { currentPlanQuota, formatPlanQuotaWindowValue, planQuotaAccountKey } from '@/lib/channel-plan-quota-display'
+import { currentPlanQuota, formatPlanQuotaWindowValue, planQuotaAccountKey, shouldDisplayPlanQuota } from '@/lib/channel-plan-quota-display'
 import type { LoadedPlanQuota } from '@/lib/channel-plan-quota-display'
 
 /** 显示警告的阈值（压缩阈值的 80%） */
@@ -33,7 +33,6 @@ const WARNING_RATIO = 0.80
 const HOVER_CLOSE_DELAY = 150
 /** 手动压缩二次确认后自动重置确认态的超时（ms），与归档按钮一致 */
 const CONFIRM_RESET_DELAY = 3000
-const UNSUPPORTED_PLAN_QUOTA_MESSAGE = '当前渠道不支持订阅 Plan 额度查询'
 
 interface ContextUsageBadgeProps {
   inputTokens?: number
@@ -306,11 +305,7 @@ export function ContextUsageBadge({
     ? Math.round((displayTokens / displayWindow) * 100)
     : undefined
 
-  const shouldShowPlanQuota = quota != null && (
-    quota.supported
-    || quota.windows.length > 0
-    || quota.message !== UNSUPPORTED_PLAN_QUOTA_MESSAGE
-  )
+  const shouldShowPlanQuota = shouldDisplayPlanQuota(quota)
 
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>

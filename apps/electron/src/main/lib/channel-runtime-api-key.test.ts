@@ -109,3 +109,32 @@ describe('渠道运行时认证解析', () => {
       .resolves.toBe('plain-api-key')
   })
 })
+
+describe('不支持订阅额度的渠道', () => {
+  test('Given 普通 Anthropic 渠道 When 查询订阅额度 Then 明确隐藏额度区域且保留原因', async () => {
+    writeChannels([
+      {
+        id: 'unsupported-plan-channel',
+        name: 'Anthropic',
+        provider: 'anthropic',
+        baseUrl: 'https://api.anthropic.com',
+        apiKey: 'plain-api-key',
+        models: [],
+        enabled: true,
+        createdAt: 1,
+        updatedAt: 1,
+      },
+    ])
+
+    const result = await channelManager.getChannelPlanQuota('unsupported-plan-channel')
+    expect(result).toMatchObject({ supported: false, shouldDisplay: false, windows: [] })
+    expect(result.message).toBeDefined()
+  })
+
+  test('Given 渠道不存在 When 查询订阅额度 Then 保留可展示的查询错误', async () => {
+    const result = await channelManager.getChannelPlanQuota('missing-channel')
+    expect(result.supported).toBe(false)
+    expect(result.shouldDisplay).not.toBe(false)
+    expect(result.message).toBeDefined()
+  })
+})
